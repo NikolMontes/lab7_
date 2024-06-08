@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: alexm
-  Date: 6/7/2024
-  Time: 6:53 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page import ="java.util.ArrayList" %>
 <%@ page import ="org.example.lab7crud.componentes.Beans.Employees"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -18,16 +11,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Lista de Empleados</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
         table {
             width: 75%;
             border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
+            margin: 20px 0;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+            align-items: center;
         }
         th, td {
-            padding: 8px;
+            padding: 12px;
             text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        button {
+            background-color: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        button:hover {
+            background-color: #007bff;
+            color: white;
         }
     </style>
 </head>
@@ -38,48 +60,50 @@
     <tr>
         <th>#</th>
         <th>Nombre</th>
-        <th>numero telefonico</th>
-        <th>correo</th>
-        <th>Puesto de trabajo</th>
-        <th>Dia de contratacion</th>
+        <th>Numero Telefonico</th>
+        <th>Correo</th>
+        <th>Puesto de Trabajo</th>
+        <th>Dia de Contratacion</th>
         <th>Salario</th>
-        <th>.</th>
-        <th>.</th>
+        <th>Editar</th>
+        <th>Borrar</th>
     </tr>
     </thead>
-    <% for (Employees employees : listaTrabajadores) { %>
     <tbody>
-    <!-- Suponiendo que esta sección se llenará dinámicamente -->
-    <!-- Ejemplo de fila de empleado -->
+    <% for (Employees employees : listaTrabajadores) { %>
     <tr>
         <td><%=employees.getEmployee_id()%></td>
-        <td><%=employees.getFirst_name()%></td>
+        <td><%=employees.getFullNameEmployee()%></td>
         <td><%=employees.getPhone_number()%></td>
         <td><%=employees.getEmail()%></td>
-        <td>null</td>
+        <td><%=employees.getJobTitle()%></td> <!-- Assuming this gets the job title -->
         <td><%=employees.getHire_date()%></td>
         <td><%=employees.getSalary()%></td>
         <td>
-            <button onclick="editarEmpleado('<%= employees.getEmployee_id() %>')">Editar</button>
+            <form action="<%=request.getContextPath()%>/home" method="get">
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" name="employeeId" value="<%=employees.getEmployee_id()%>">
+                <button type="submit">Editar</button>
+            </form>
         </td>
-        <td><button onclick="borrarEmpleado('<%= employees.getEmployee_id() %>')">Borrar</button></td>
+        <td>
+            <button onclick="borrarEmpleado('<%= employees.getEmployee_id() %>')">Borrar</button>
+        </td>
     </tr>
-
-    </tbody>
     <% } %>
+    </tbody>
 </table>
 <br>
-<button onclick="window.location.href='/create-employee'">Crear Nuevo Empleado</button>
+<button onclick="window.location.href='/home?action=new'">Crear Nuevo Empleado</button>
 
 <script>
     function editarEmpleado(id) {
-        window.location.href = `/edit-job?id=${id}`;
+        window.location.href = `/home?action=edit&employeeId=${id}`;
     }
 
     function borrarEmpleado(id) {
-        if(confirm('¿Está seguro que desea borrar este trabajo?')) {
-            // Lógica para borrar trabajo
-            window.location.href = `/delete-job?id=${id}`;
+        if(confirm('¿Está seguro que desea borrar este empleado?')) {
+            window.location.href = `/home?action=del&employeeId=${id}`;
         }
     }
 </script>
