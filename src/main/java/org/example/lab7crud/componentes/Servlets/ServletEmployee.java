@@ -29,19 +29,19 @@ public class ServletEmployee extends HttpServlet{
 
         switch (action){
             case "lista":
-                //saca del modelo
+
                 ArrayList<Employees> listaemployees = employeedao.listar();
 
-                //mandar la lista a la vista -> job/lista.jsp
+
                 req.setAttribute("lista",listaemployees);
                 RequestDispatcher rd = req.getRequestDispatcher("job/listaemployee.jsp");
                 rd.forward(req,resp);
                 break;
             case "new":
-                req.getRequestDispatcher("job/form_new.jsp").forward(req,resp);
+                req.getRequestDispatcher("job/editionform.jsp").forward(req,resp);
                 break;
             case "edit":
-                String id = req.getParameter("employee_id");
+                String id = req.getParameter("employeeId");
                 Employees employees = employeedao.busquedaporId(id);
 
                 if(employees != null){
@@ -52,15 +52,11 @@ public class ServletEmployee extends HttpServlet{
                 }
                 break;
             case "del":
-                String idd = req.getParameter("employee_id");
+                String idd = req.getParameter("employeeId");
                 Employees employees1 = employeedao.busquedaporId(idd);
 
                 if(employees1 != null){
-                    try {
-                        employeedao.borrarporId(idd);
-                    } catch (SQLException e) {
-                        System.out.println("Log: excepcion: " + e.getMessage());
-                    }
+                    employeedao.borrarporId(idd);
                 }
                 resp.sendRedirect(req.getContextPath() + "/home");
                 break;
@@ -72,44 +68,58 @@ public class ServletEmployee extends HttpServlet{
             throws ServletException, IOException {
         req.setCharacterEncoding("text/html");
 
-        String action = req.getParameter("action")== null ? "crear" : req.getParameter("action");
+        String action = req.getParameter("action")== null ? "create" : req.getParameter("action");
 
         DaoEmployee employeedao = new DaoEmployee();
 
         switch (action) {
             case "create":
+                String employeeId = req.getParameter("employee_id");
                 String firstName = req.getParameter("first_name");
                 String lastName = req.getParameter("last_name");
                 String email = req.getParameter("email");
                 String phoneNumber = req.getParameter("phone_number");
-                String hireDate = req.getParameter("hire_date");
-                String salary = req.getParameter("salary");
-                String comissionPCT = req.getParameter("comission_pct");
-                String employeeId = req.getParameter("employee_id");
-                boolean isAllValid = true;
+                Date hireDate = Date.valueOf(req.getParameter("hire_date"));
+                Float salary = Float.parseFloat(req.getParameter("salary"));
+                Float commissionPCT = Float.parseFloat(req.getParameter("commission_pct"));
+                String jobId = req.getParameter("job_id");
 
-                if(isAllValid){
+                Employees newEmployee = new Employees();
+                newEmployee.setEmployee_id(Integer.parseInt(employeeId));
+                newEmployee.setFullNameEmployee(firstName, lastName);
+                newEmployee.setEmail(email);
+                newEmployee.setPhone_number(phoneNumber);
+                newEmployee.setHire_date(hireDate);
+                newEmployee.setSalary(salary);
+                newEmployee.setCommission_pct(commissionPCT);
+                newEmployee.setJobTitle(jobId);
+
+                Employees existEmployee = employeedao.busquedaporId(employeeId);
+
+                if (existEmployee == null) {
 
                     Employees employees = employeedao.busquedaporId(employeeId);
 
                     if(employees == null){
-                        employeedao.crear(employeeId,firstName,lastName,email,phoneNumber, email, hireDate, salary, comissionPCT);
+                        employeedao.crear(employeeId,firstName,lastName,phoneNumber,email, hireDate, salary, commissionPCT);
                         resp.sendRedirect(req.getContextPath() + "/home");
                     }else{
-                        req.getRequestDispatcher("job/form_new.jsp").forward(req,resp);
+                        req.getRequestDispatcher("job/editionform.jsp").forward(req,resp);
                     }
                 }else{
-                    req.getRequestDispatcher("job/form_new.jsp").forward(req,resp);
+                    req.getRequestDispatcher("job/editionform.jsp").forward(req,resp);
                 }
 
                 break;
             case "update":
-                String id = req.getParameter("id");
+                String id = req.getParameter("employee_id");
                 String firstNameUpdate = req.getParameter("first_name");
                 String lastNameUpdate = req.getParameter("last_name");
                 String emailUpdate = req.getParameter("email");
                 String phoneNumberUpdate = req.getParameter("phone_number");
-                String hireDateUpdate = req.getParameter("hire_date");
+                Date hireDateUpdate = Date.valueOf(req.getParameter("hire_date"));
+                Float salaryUpdate = Float.parseFloat(req.getParameter("salary"));
+                Float commissionPCTUpdate = Float.parseFloat(req.getParameter("commission_pct"));
                 String jobIdUpdate = req.getParameter("job_id");
                 boolean isAllValid2 = true;
 
@@ -119,6 +129,9 @@ public class ServletEmployee extends HttpServlet{
                     employees.setEmail(emailUpdate);
                     employees.setPhone_number(phoneNumberUpdate);
                     employees.setHire_date(hireDateUpdate);
+                    employees.setSalary(salaryUpdate);
+                    employees.setCommission_pct(commissionPCTUpdate);
+                    employees.setJobTitle(jobIdUpdate);
 
                     employeedao.editarporId(employees);
                     resp.sendRedirect(req.getContextPath() + "/home");

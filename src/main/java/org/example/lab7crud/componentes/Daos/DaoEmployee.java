@@ -160,7 +160,7 @@ public class DaoEmployee {
 
     }
 
-    public void crear(Employees employee,String employid, String firstname, String lastName, String phoneNumber, String email, Date hireDate, float salary, float comissionPCT) {
+    public void crear(String employid, String firstname, String lastName, String phoneNumber, String email, Date hireDate, float salary, float comissionPCT) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 

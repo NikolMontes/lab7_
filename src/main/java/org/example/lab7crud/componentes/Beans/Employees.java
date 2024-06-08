@@ -75,7 +75,7 @@ public class Employees {
     }
 
     public void setCommission_pct(float commission_pct) {
-        this.commission_pct = comission_pct;
+        this.commission_pct = commission_pct;
     }
      public String getFullNameEmployee () {
         return fullNameEmployee;
